@@ -11,12 +11,12 @@ int main()
 
 	// get the screen resolution and create an SFML window
 	Vector2f resolution;
-	resolution.x = VideoMode::getDesktopMode().width;
-	resolution.y = VideoMode::getDesktopMode().height;
+	resolution.x = (float)VideoMode::getDesktopMode().width;
+	resolution.y = (float)VideoMode::getDesktopMode().height;
 
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	RenderWindow wnd(VideoMode(resolution.x, resolution.y), "Zombie Arena", Style::Fullscreen, settings);
+	RenderWindow wnd(VideoMode((unsigned int)resolution.x, (unsigned int)resolution.y), "Zombie Arena", Style::Fullscreen, settings);
 
 	// create an sfml view for the main action
 	View mainView(FloatRect(0, 0, resolution.x, resolution.y));
@@ -40,16 +40,167 @@ int main()
 		sf::Event e;
 		while (wnd.pollEvent(e))
 		{
+			if (e.type == Event::KeyPressed)
+			{
+				// Pause the game while playing
+				if (e.key.code == Keyboard::Return && state == State::PLAYING)
+				{
+					state = State::PAUSED;
+				}
+				else if (e.key.code == Keyboard::Return && state == State::PAUSED)
+				{
+					state = State::PLAYING;
+					//reset the game clock timer
+					clock.restart();
+				}
+
+				// start a new game while in GAME_OVER state
+				else if (e.key.code == Keyboard::Return && state == State::GAME_OVER)
+				{
+					state = State::LEVELING_UP;
+				}
+
+				if (state == State::PLAYING)
+				{
+
+				}
+
+			}
 			if (e.type == sf::Event::Closed)
 				wnd.close();
 
 			if (e.type == Event::KeyReleased && e.key.code == Keyboard::Escape)
 				wnd.close();
+
+
+
+			// Handle the leveling up state
+			if (state == State::LEVELING_UP)
+			{
+				// Handle the player LEVELING up
+				if (e.key.code == Keyboard::Num1)
+				{
+					state = State::PLAYING;
+				}
+				if (e.key.code == Keyboard::Num2)
+				{
+					state = State::PLAYING;
+				}
+				if (e.key.code == Keyboard::Num3)
+				{
+					state = State::PLAYING;
+				}
+				if (e.key.code == Keyboard::Num4)
+				{
+					state = State::PLAYING;
+				}
+				if (e.key.code == Keyboard::Num5)
+				{
+					state = State::PLAYING;
+				}
+				if (e.key.code == Keyboard::Num6)
+				{
+					state = State::PLAYING;
+				}
+
+				if (state == State::PLAYING)
+				{
+					// Prepare the level
+					// We will modify the next two lines after
+					arena.width = 500;
+					arena.height = 500;
+					arena.left = 0;
+					arena.top = 0;
+
+					int tileSize = 50;
+
+					// Spawn the player in the middle of the arena
+					player.spawn(arena, resolution, tileSize);
+
+					// Reset the clock so there isn't a frame jump
+					clock.restart();
+				}
+
+			} // end of LEVELING UP
 		}
-		wnd.clear();
+		// Handle WASD while playing
+		if (state == State::PLAYING)
+		{
+			// Handle the pressing and releasing of the WASD keys
+			if (Keyboard::isKeyPressed(Keyboard::W))
+			{
+				player.moveUp();
+			}
+			else
+			{
+				player.stopUp();
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::S))
+			{
+				player.moveDown();
+			}
+			else
+			{
+				player.stopDown();
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::A))
+			{
+				player.moveLeft();
+			}
+			else
+			{
+				player.stopLeft();
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::D))
+			{
+				player.moveRight();
+			}
+			else
+			{
+				player.stopRight();
+			}
+		} // END WASD while playing
+
+		// Update frame
+		if (state == State::PLAYING)
+		{
+			Time dt = clock.restart();
+			gameTimeTotal += dt;
+			float dtAsSeconds = dt.asSeconds();
+
+			mouseScreenPosition = Mouse::getPosition();
+			mouseWorldPosition = wnd.mapPixelToCoords(Mouse::getPosition(), mainView);
+
+			player.update(dtAsSeconds, Mouse::getPosition());
+
+			Vector2f playerPosition(player.getCenter());
+
+			// make the view centre around the player
+			mainView.setCenter(player.getCenter());
+		}
+
+		if (state == State::PLAYING)
+		{
+			wnd.clear();
+			wnd.setView(mainView);
+
+			wnd.draw(player.getSprite());
+		}
+		if (state == State::LEVELING_UP)
+		{
+		}
+		if (state == State::PAUSED)
+		{
+		}
+		if (state == State::GAME_OVER)
+		{
+		}
 
 		wnd.display();
-	}
+	}// end game loop
 	
 	return EXIT_SUCCESS;
 }
