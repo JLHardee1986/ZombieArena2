@@ -132,6 +132,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TextureHolder.cpp" />
+    <ClCompile Include="ZombieArena.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="graphics\ammo_icon.png" />
@@ -144,6 +146,7 @@
     <Image Include="graphics\crawler.png" />
     <Image Include="graphics\crosshair.png" />
     <Image Include="graphics\health_pickup.png" />
+    <Image Include="graphics\platTileSheet01.png" />
     <Image Include="graphics\player.png" />
     <Image Include="graphics\sample.png" />
   </ItemGroup>
@@ -157,7 +160,9 @@
     <Media Include="sound\splat.wav" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TextureHolder.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ZombieArena.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

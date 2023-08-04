@@ -27,6 +27,12 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZombieArena.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="graphics\ammo_icon.png">
@@ -65,6 +71,9 @@
     <Image Include="graphics\sample.png">
       <Filter>Resource Files\graphics</Filter>
     </Image>
+    <Image Include="graphics\platTileSheet01.png">
+      <Filter>Resource Files\graphics</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Media Include="sound\hit.wav">
@@ -91,6 +100,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZombieArena.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "ZombieArena.h"
+
+
 using namespace sf;
 
 int main()
@@ -16,7 +19,8 @@ int main()
 
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	RenderWindow wnd(VideoMode((unsigned int)resolution.x, (unsigned int)resolution.y), "Zombie Arena", Style::Fullscreen, settings);
+	RenderWindow wnd(VideoMode((unsigned int)800, (unsigned int)500)
+		, "Zombie Arena", Style::Default, settings);
 
 	// create an sfml view for the main action
 	View mainView(FloatRect(0, 0, resolution.x, resolution.y));
@@ -34,6 +38,15 @@ int main()
 	Player player;
 
 	IntRect arena;
+
+	
+	// Generate the map
+	VertexArray background;
+	Texture textureBackground;
+	textureBackground.loadFromFile("graphics/background_sheet.png");
+
+
+
 
 	while (wnd.isOpen())
 	{
@@ -112,7 +125,11 @@ int main()
 					arena.left = 0;
 					arena.top = 0;
 
-					int tileSize = 50;
+					// pass the vertex array by reference
+					// to the createBackground function
+					int tileSize = createBackground(background, arena);
+
+					//int tileSize = 50;
 
 					// Spawn the player in the middle of the arena
 					player.spawn(arena, resolution, tileSize);
@@ -185,21 +202,33 @@ int main()
 		if (state == State::PLAYING)
 		{
 			wnd.clear();
+
+
 			wnd.setView(mainView);
 
+			wnd.draw(background, &textureBackground);
+
 			wnd.draw(player.getSprite());
+
+			wnd.display();
 		}
 		if (state == State::LEVELING_UP)
 		{
+			wnd.clear();
+			wnd.display();
 		}
 		if (state == State::PAUSED)
 		{
+			wnd.clear();
+			wnd.display();
 		}
 		if (state == State::GAME_OVER)
 		{
+			wnd.clear();
+			wnd.display();
 		}
 
-		wnd.display();
+		
 	}// end game loop
 	
 	return EXIT_SUCCESS;
