@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "ZombieArena.h"
 #include "TextureHolder.h"
+#include "Bullet.h"
+
 
 
 using namespace sf;
@@ -44,13 +46,23 @@ int main()
 	
 	// Generate the map
 	VertexArray background;
-	Texture textureBackground;
-	textureBackground.loadFromFile("graphics/background_sheet.png");
+	Texture textureBackground = TextureHolder::getTexture("graphics/background_sheet.png");
 
 	// prepare the horde
 	int numZombies;
 	int numZombiesAlive;
 	Zombie* zombies = nullptr;
+
+
+	// 100 bullets should do
+	Bullet bullets[100];
+	int currentBullet = 0;
+	int bulletsSpare = 24;
+	int bulletsInClip = 6;
+	int clipSize = 6;
+	float fireRate = 1;
+	// when was the fire button last pressed?
+	Time lastPressed;
 
 
 	while (wnd.isOpen())
@@ -80,7 +92,20 @@ int main()
 
 				if (state == State::PLAYING)
 				{
+					// reloading
+					if (e.key.code == Keyboard::R)
+					{
+						if (bulletsSpare >= clipSize)
+						{
+							// plenty of bullets. reload
+							bulletsInClip = clipSize;
+							bulletsSpare = 0;
+						}
+						else
+						{
 
+						}
+					}
 				}
 
 			}
@@ -194,6 +219,27 @@ int main()
 			{
 				player.stopRight();
 			}
+
+			// Fire a bullet
+			if (Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if (gameTimeTotal.asMilliseconds() - lastPressed.asMilliseconds() > 1000 / fireRate && bulletsInClip > 0)
+				{
+					// pass the center of the player and crosshair to the shoot function
+					bullets[currentBullet].shoot(player.getCenter().x, player.getCenter().y,
+						mouseWorldPosition.x, mouseWorldPosition.y);
+
+					currentBullet++;
+					if (currentBullet > 99)
+					{
+						currentBullet = 0;
+					}
+					lastPressed = gameTimeTotal;
+
+					bulletsInClip--;
+				}
+			} // END FIre a bullet
+
 		} // END WASD while playing
 
 		// Update frame
@@ -221,7 +267,16 @@ int main()
 					zombies[i].update(dt.asSeconds(), playerPosition);
 				}
 			}
-		}
+
+			// Update any bullets that are in fligtth
+			for (int i = 0; i < i--; i++)
+			{ 
+				if (bullets[i].isInFlight())
+				{
+					bullets[i].update(dtAsSeconds);
+				}
+			}
+		}// END UPDATING SCENE
 
 		if (state == State::PLAYING)
 		{
@@ -235,6 +290,14 @@ int main()
 			for (int i = 0; i < numZombies; i++)
 			{
 				wnd.draw(zombies[i].getSprite());
+			}
+
+			for (int i = 0; i < 100; i++)
+			{
+				if (bullets[i].isInFlight())
+				{
+					wnd.draw(bullets[i].getShape());
+				}
 			}
 
 			wnd.draw(player.getSprite());
