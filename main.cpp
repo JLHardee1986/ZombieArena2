@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "ZombieArena.h"
+#include "TextureHolder.h"
 
 
 using namespace sf;
 
 int main()
 {
+	TextureHolder holder;
 	
 	enum class State { PAUSED, LEVELING_UP, GAME_OVER, PLAYING };
 
@@ -45,7 +47,10 @@ int main()
 	Texture textureBackground;
 	textureBackground.loadFromFile("graphics/background_sheet.png");
 
-
+	// prepare the horde
+	int numZombies;
+	int numZombiesAlive;
+	Zombie* zombies = nullptr;
 
 
 	while (wnd.isOpen())
@@ -120,19 +125,29 @@ int main()
 				{
 					// Prepare the level
 					// We will modify the next two lines after
-					arena.width = 500;
-					arena.height = 500;
+					arena.width = 1500;
+					arena.height = 1500;
 					arena.left = 0;
 					arena.top = 0;
+
 
 					// pass the vertex array by reference
 					// to the createBackground function
 					int tileSize = createBackground(background, arena);
 
-					//int tileSize = 50;
-
 					// Spawn the player in the middle of the arena
 					player.spawn(arena, resolution, tileSize);
+
+					numZombies = 1000;
+					if (zombies != nullptr) 
+					{ 
+						delete[] zombies;
+						zombies = nullptr; 
+					}
+
+					zombies = createHorde(numZombies, arena);
+					numZombiesAlive = numZombies;
+
 
 					// Reset the clock so there isn't a frame jump
 					clock.restart();
@@ -197,6 +212,15 @@ int main()
 
 			// make the view centre around the player
 			mainView.setCenter(player.getCenter());
+
+			// loop through each zombie and update them
+			for (int i = 0; i < numZombies; i++)
+			{
+				if (zombies[i].isAlive())
+				{
+					zombies[i].update(dt.asSeconds(), playerPosition);
+				}
+			}
 		}
 
 		if (state == State::PLAYING)
@@ -207,6 +231,11 @@ int main()
 			wnd.setView(mainView);
 
 			wnd.draw(background, &textureBackground);
+
+			for (int i = 0; i < numZombies; i++)
+			{
+				wnd.draw(zombies[i].getSprite());
+			}
 
 			wnd.draw(player.getSprite());
 
@@ -231,5 +260,7 @@ int main()
 		
 	}// end game loop
 	
+	delete[] zombies;
+
 	return EXIT_SUCCESS;
 }
