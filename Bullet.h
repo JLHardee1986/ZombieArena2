@@ -22,6 +22,7 @@ class Bullet
 	// What fraction of 1 pixel does the bullet travel,
 	//  Horizontally and vertically each frame?
 	//  These values will be dervied from bulletSpeed
+
 	float m_bulletDistanceX;
 	float m_bulletDistanceY;
 
@@ -37,6 +38,7 @@ public:
 	Bullet();
 
 	// stop the bullet
+
 	void stop();
 
 	bool isInFlight();
@@ -55,3 +57,4 @@ public:
 };
 
 #endif
+

@@ -1,6 +1,7 @@
 #include "Bullet.h"
 
 Bullet::Bullet()
+
 	: m_bulletDistanceX(0), m_bulletDistanceY(0)
 	, m_pos({ 0.f,0.f }), m_bulletShape()
 	, m_inFlight(false), m_bulletSpeed(1000)
@@ -10,7 +11,7 @@ Bullet::Bullet()
 	m_bulletShape.setFillColor(sf::Color::Red);
 }
 
-void Bullet::shoot(float startX, float startY, float targetX, float targetY)
+void Bullet::shoot(float startX, float startY, float xTarget, float yTarget)
 {
 
 	// keep track of the bullet
@@ -21,11 +22,13 @@ void Bullet::shoot(float startX, float startY, float targetX, float targetY)
 	// Calculate the gradient of the flight path
 	float gradient = (startX - targetX) / (startY - targetY);
 
+
 	// any gradient less than one needs to be negative
 	if (gradient < 0)
 	{
 		gradient *= -1;
 	}
+
 	
 	// Calculate the ratio between x and y
 	float ratioXY = m_bulletSpeed / (1 + gradient);
@@ -36,11 +39,14 @@ void Bullet::shoot(float startX, float startY, float targetX, float targetY)
 
 	// Point the bullet in the right direction
 	if (targetX < startX)
+
 	{
 		m_bulletDistanceX *= -1;
 	}
 
+
 	if (targetY < startY)
+
 	{
 		m_bulletDistanceY *= -1;
 	}
@@ -53,6 +59,7 @@ void Bullet::shoot(float startX, float startY, float targetX, float targetY)
 	m_maxY = startY + range;
 
 	// position the bullet ready to be drawn
+
 	m_bulletShape.setPosition(m_pos);
 
 }
@@ -69,6 +76,7 @@ bool Bullet::isInFlight()
 
 
 
+
 sf::FloatRect Bullet::getPosition()
 {
 	return m_bulletShape.getGlobalBounds();
@@ -81,6 +89,7 @@ sf::RectangleShape Bullet::getShape()
 
 void Bullet::update(float elapsedTime)
 {
+
 	// Update the bullet position variables
 	m_pos.x += m_bulletDistanceX * elapsedTime;
 	m_pos.y += m_bulletDistanceY * elapsedTime;
@@ -94,4 +103,5 @@ void Bullet::update(float elapsedTime)
 	{
 		m_inFlight = false;
 	}
+
 }
