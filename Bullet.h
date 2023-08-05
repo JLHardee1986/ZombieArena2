@@ -2,6 +2,10 @@
 #define __BULLET__
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include "constants.h"
+
+
 
 class Bullet
 {
@@ -9,6 +13,13 @@ class Bullet
 
 	// Where is the bullet?
 	sf::Vector2f m_pos;
+
+	// angle to the target
+	float m_rotation;
+	float m_angleRadians;
+
+	float m_vx;
+	float m_vy;
 
 	// What each bullet looks like
 	sf::RectangleShape m_bulletShape;

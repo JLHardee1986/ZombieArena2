@@ -3,7 +3,8 @@
 #include "ZombieArena.h"
 #include "TextureHolder.h"
 #include "Bullet.h"
-
+#include <cmath>
+#include "constants.h"
 
 
 using namespace sf;
@@ -60,7 +61,7 @@ int main()
 	int bulletsSpare = 24;
 	int bulletsInClip = 6;
 	int clipSize = 6;
-	float fireRate = 1;
+	float fireRate = 3.0f;
 	// when was the fire button last pressed?
 	Time lastPressed;
 
@@ -90,6 +91,69 @@ int main()
 					state = State::LEVELING_UP;
 				}
 
+				// Handle the leveling up state
+				if (state == State::LEVELING_UP)
+				{
+					// Handle the player LEVELING up
+					if (e.key.code == Keyboard::Num1)
+					{
+						state = State::PLAYING;
+					}
+					if (e.key.code == Keyboard::Num2)
+					{
+						state = State::PLAYING;
+					}
+					if (e.key.code == Keyboard::Num3)
+					{
+						state = State::PLAYING;
+					}
+					if (e.key.code == Keyboard::Num4)
+					{
+						state = State::PLAYING;
+					}
+					if (e.key.code == Keyboard::Num5)
+					{
+						state = State::PLAYING;
+					}
+					if (e.key.code == Keyboard::Num6)
+					{
+						state = State::PLAYING;
+					}
+
+					if (state == State::PLAYING)
+					{
+						// Prepare the level
+						// We will modify the next two lines after
+						arena.width = 1500;
+						arena.height = 1500;
+						arena.left = 0;
+						arena.top = 0;
+
+
+						// pass the vertex array by reference
+						// to the createBackground function
+						int tileSize = createBackground(background, arena);
+
+						// Spawn the player in the middle of the arena
+						player.spawn(arena, resolution, tileSize);
+
+						numZombies = 20;
+						if (zombies != nullptr)
+						{
+							delete[] zombies;
+							zombies = nullptr;
+						}
+
+						zombies = createHorde(numZombies, arena);
+						numZombiesAlive = numZombies;
+
+
+						// Reset the clock so there isn't a frame jump
+						clock.restart();
+					}
+
+				} // end of LEVELING UP
+
 				if (state == State::PLAYING)
 				{
 					// reloading
@@ -99,11 +163,17 @@ int main()
 						{
 							// plenty of bullets. reload
 							bulletsInClip = clipSize;
+							bulletsSpare -= clipSize;
+						}
+						else if (bulletsSpare > 0)
+						{
+							// only a few bullets left
+							bulletsInClip = bulletsSpare;
 							bulletsSpare = 0;
 						}
 						else
 						{
-
+							// nothing here yet
 						}
 					}
 				}
@@ -114,73 +184,10 @@ int main()
 
 			if (e.type == Event::KeyReleased && e.key.code == Keyboard::Escape)
 				wnd.close();
-
-
-
-			// Handle the leveling up state
-			if (state == State::LEVELING_UP)
-			{
-				// Handle the player LEVELING up
-				if (e.key.code == Keyboard::Num1)
-				{
-					state = State::PLAYING;
-				}
-				if (e.key.code == Keyboard::Num2)
-				{
-					state = State::PLAYING;
-				}
-				if (e.key.code == Keyboard::Num3)
-				{
-					state = State::PLAYING;
-				}
-				if (e.key.code == Keyboard::Num4)
-				{
-					state = State::PLAYING;
-				}
-				if (e.key.code == Keyboard::Num5)
-				{
-					state = State::PLAYING;
-				}
-				if (e.key.code == Keyboard::Num6)
-				{
-					state = State::PLAYING;
-				}
-
-				if (state == State::PLAYING)
-				{
-					// Prepare the level
-					// We will modify the next two lines after
-					arena.width = 1500;
-					arena.height = 1500;
-					arena.left = 0;
-					arena.top = 0;
-
-
-					// pass the vertex array by reference
-					// to the createBackground function
-					int tileSize = createBackground(background, arena);
-
-					// Spawn the player in the middle of the arena
-					player.spawn(arena, resolution, tileSize);
-
-					numZombies = 1000;
-					if (zombies != nullptr) 
-					{ 
-						delete[] zombies;
-						zombies = nullptr; 
-					}
-
-					zombies = createHorde(numZombies, arena);
-					numZombiesAlive = numZombies;
-
-
-					// Reset the clock so there isn't a frame jump
-					clock.restart();
-				}
-
-			} // end of LEVELING UP
+			
 		}
-		// Handle WASD while playing
+
+		// Handle WASD and mouse click while playing
 		if (state == State::PLAYING)
 		{
 			// Handle the pressing and releasing of the WASD keys
@@ -221,10 +228,12 @@ int main()
 			}
 
 			// Fire a bullet
-			if (Mouse::isButtonPressed(sf::Mouse::Left))
+			if (Mouse::isButtonPressed(Mouse::Left))
 			{
 				if (gameTimeTotal.asMilliseconds() - lastPressed.asMilliseconds() > 1000 / fireRate && bulletsInClip > 0)
 				{
+					mouseScreenPosition = Mouse::getPosition(wnd);
+					mouseWorldPosition = wnd.mapPixelToCoords(Mouse::getPosition(wnd), mainView);
 					// pass the center of the player and crosshair to the shoot function
 					bullets[currentBullet].shoot(player.getCenter().x, player.getCenter().y,
 						mouseWorldPosition.x, mouseWorldPosition.y);
@@ -240,7 +249,9 @@ int main()
 				}
 			} // END FIre a bullet
 
-		} // END WASD while playing
+		} // END WASD and mouse click while playing
+
+
 
 		// Update frame
 		if (state == State::PLAYING)
@@ -249,15 +260,15 @@ int main()
 			gameTimeTotal += dt;
 			float dtAsSeconds = dt.asSeconds();
 
-			mouseScreenPosition = Mouse::getPosition();
-			mouseWorldPosition = wnd.mapPixelToCoords(Mouse::getPosition(), mainView);
+			mouseScreenPosition = Mouse::getPosition(wnd);
+			mouseWorldPosition = wnd.mapPixelToCoords(Mouse::getPosition(wnd), mainView);
 
 			player.update(dtAsSeconds, Mouse::getPosition());
 
 			Vector2f playerPosition(player.getCenter());
 
 			// make the view centre around the player
-			mainView.setCenter(player.getCenter());
+			mainView.setCenter(playerPosition);
 
 			// loop through each zombie and update them
 			for (int i = 0; i < numZombies; i++)
@@ -269,7 +280,7 @@ int main()
 			}
 
 			// Update any bullets that are in fligtth
-			for (int i = 0; i < i--; i++)
+			for (int i = 0; i < 100; i++)
 			{ 
 				if (bullets[i].isInFlight())
 				{
@@ -277,6 +288,8 @@ int main()
 				}
 			}
 		}// END UPDATING SCENE
+
+
 
 		if (state == State::PLAYING)
 		{
