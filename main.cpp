@@ -65,6 +65,9 @@ int main()
 	// when was the fire button last pressed?
 	Time lastPressed;
 
+	wnd.setMouseCursorVisible(false);
+	Sprite spriteCrosshair(TextureHolder::getTexture("graphics/crosshair.png"));
+	spriteCrosshair.setOrigin(25, 25);
 
 	while (wnd.isOpen())
 	{
@@ -263,6 +266,8 @@ int main()
 			mouseScreenPosition = Mouse::getPosition(wnd);
 			mouseWorldPosition = wnd.mapPixelToCoords(Mouse::getPosition(wnd), mainView);
 
+			spriteCrosshair.setPosition(mouseWorldPosition);
+
 			player.update(dtAsSeconds, Mouse::getPosition());
 
 			Vector2f playerPosition(player.getCenter());
@@ -314,6 +319,8 @@ int main()
 			}
 
 			wnd.draw(player.getSprite());
+
+			wnd.draw(spriteCrosshair);
 
 			wnd.display();
 		}
