@@ -1,20 +1,28 @@
 #ifndef __BULLET__
-#define __BULLET_
+#define __BULLET__
 
 #include <SFML/Graphics.hpp>
 
 class Bullet
 {
-private:
-	sf::Vector2f m_position;
 
+
+	// Where is the bullet?
+	sf::Vector2f m_pos;
+
+	// What each bullet looks like
 	sf::RectangleShape m_bulletShape;
 
+	// is this bullet currently whizzing through the air
 	bool m_inFlight = false;
 
-	float m_bulletSpeed = 1000.f;
+	// how fast does a bullet travel?
+	float m_bulletSpeed = 1000;
 
-	// fraction of one pixel bullet travels each frame;
+	// What fraction of 1 pixel does the bullet travel,
+	//  Horizontally and vertically each frame?
+	//  These values will be dervied from bulletSpeed
+
 	float m_bulletDistanceX;
 	float m_bulletDistanceY;
 
@@ -25,19 +33,28 @@ private:
 	float m_minY;
 
 public:
+
+	//ctor 
 	Bullet();
+
+	// stop the bullet
 
 	void stop();
 
 	bool isInFlight();
 
-	void shoot(float startX, float startY, float xTarget, float yTarget);
+	// launch a new bullet
+	void shoot(float startX, float startY, float targetX, float targetY);
 
+	// Tell the calling code where the bullet is in the world
 	sf::FloatRect getPosition();
 
+	// Return the actual shape (for drawing)
 	sf::RectangleShape getShape();
 
+	// Update the bullet each frame
 	void update(float elapsedTime);
 };
 
 #endif
+
