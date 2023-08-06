@@ -5,6 +5,8 @@
 #include "Bullet.h"
 #include <cmath>
 #include "constants.h"
+#include "Pickup.h"
+
 
 
 using namespace sf;
@@ -25,7 +27,7 @@ int main()
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	RenderWindow wnd(VideoMode((unsigned int)800, (unsigned int)500)
-		, "Zombie Arena", Style::Default, settings);
+		, "Zombie Arena", Style::Fullscreen, settings);
 
 	// create an sfml view for the main action
 	View mainView(FloatRect(0, 0, resolution.x, resolution.y));
@@ -68,6 +70,10 @@ int main()
 	wnd.setMouseCursorVisible(false);
 	Sprite spriteCrosshair(TextureHolder::getTexture("graphics/crosshair.png"));
 	spriteCrosshair.setOrigin(25, 25);
+
+	// Create a couple of pickups
+	Pickup healthPickup(1);
+	Pickup ammoPickup(2);
 
 	while (wnd.isOpen())
 	{
@@ -139,6 +145,10 @@ int main()
 
 						// Spawn the player in the middle of the arena
 						player.spawn(arena, resolution, tileSize);
+
+						// Configure the pickups
+						healthPickup.setArena(arena);
+						ammoPickup.setArena(arena);
 
 						numZombies = 20;
 						if (zombies != nullptr)
@@ -292,6 +302,10 @@ int main()
 					bullets[i].update(dtAsSeconds);
 				}
 			}
+
+			// update the pickups
+			healthPickup.update(dtAsSeconds);
+			ammoPickup.update(dtAsSeconds);
 		}// END UPDATING SCENE
 
 
@@ -319,6 +333,13 @@ int main()
 			}
 
 			wnd.draw(player.getSprite());
+
+			// draw pickups, if currently spawned
+			if (ammoPickup.isSpawned())
+				wnd.draw(ammoPickup.getSprite());
+
+			if (healthPickup.isSpawned())
+				wnd.draw(healthPickup.getSprite());
 
 			wnd.draw(spriteCrosshair);
 
