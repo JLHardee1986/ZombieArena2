@@ -75,6 +75,10 @@ int main()
 	Pickup healthPickup(1);
 	Pickup ammoPickup(2);
 
+	// about the game
+	int score = 0;
+	int hiScore = 0;
+
 	while (wnd.isOpen())
 	{
 		sf::Event e;
@@ -306,6 +310,43 @@ int main()
 			// update the pickups
 			healthPickup.update(dtAsSeconds);
 			ammoPickup.update(dtAsSeconds);
+
+
+			// collision detection
+			// Have any zombies been shot
+			for (int i = 0; i < 100; i++)
+			{
+				for (int j = 0; j < numZombies; j++)
+				{
+					if (bullets[i].isInFlight() && zombies[j].isAlive())
+					{
+						if (bullets[i].getPosition().intersects(zombies[j].getPosition()))
+						{
+							// stop the bullet
+							bullets[i].stop();
+
+							// register the hit and see if it was a kill
+							if (zombies[j].hit())
+							{
+								// if here, then the zombie was hit and killed with this shot
+								score += 10;
+								if (score >= hiScore)
+								{
+									hiScore = score;
+								}
+
+								numZombiesAlive--;
+
+								// when all the zombies are dead (again)
+								if (numZombiesAlive == 0)
+								{
+									state = State::LEVELING_UP;
+								}
+							}
+						}
+					}
+				}
+			} // End of zombies being shot
 		}// END UPDATING SCENE
 
 
