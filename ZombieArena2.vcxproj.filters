@@ -19,6 +19,9 @@
     <Filter Include="Resource Files\sound">
       <UniqueIdentifier>{a0abbe8f-a893-4306-8346-0084053696a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\fonts">
+      <UniqueIdentifier>{fa0585f4-6b4e-420b-a21f-a465b05dfd16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,5 +132,10 @@
     <ClInclude Include="Pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="fonts\DS-DIGI.TTF">
+      <Filter>Resource Files\fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
