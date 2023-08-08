@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\fonts">
       <UniqueIdentifier>{fa0585f4-6b4e-420b-a21f-a465b05dfd16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\gamedata">
+      <UniqueIdentifier>{ca8411cf-c930-4fcc-8a45-2957b8c4a3f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -137,5 +140,10 @@
     <Font Include="fonts\DS-DIGI.TTF">
       <Filter>Resource Files\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="gamedata\scores.txt">
+      <Filter>Resource Files\gamedata</Filter>
+    </Text>
   </ItemGroup>
 </Project>
